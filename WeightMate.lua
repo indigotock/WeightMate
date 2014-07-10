@@ -246,7 +246,9 @@ end
 
 function Builder:ShowImportExportBox( wndHandler, wndControl, eMouseButton)
   self.wndMain:FindChild("ImportExportWindow"):Show(true,false)
-  self.wndMain:FindChild("ExportEditBox"):SetText(self.btools.util.encode_base64(self.btools.util.serialise_table(self.tBuild)))
+  self.wndMain:FindChild("ExportEditBox"):SetText(
+    self.btools.util.encode_base64(
+      self.btools.util.serialise_table(self.tBuild)), 'qQwWeErRtTyYuUiIoOpPaAsSdDfFgGhHjJkKlLzZxXcCvVbBnNmM9876543210/*')
   self.wndMain:FindChild("ImportEditBox"):SetText("")
   self.wndMain:FindChild("ImportError"):Show(false,false)
 end
@@ -256,7 +258,7 @@ function Builder:GetBuildFromB64(b64)
     return false, nil
   end
   
-  local converted = self.btools.util.decode_base64(b64)
+  local converted = self.btools.util.decode_base64(b64, 'qQwWeErRtTyYuUiIoOpPaAsSdDfFgGhHjJkKlLzZxXcCvVbBnNmM9876543210/*')
 
   local importedFunc = loadstring("return "..converted)
   if not importedFunc then
@@ -273,7 +275,8 @@ function Builder:GetBuildFromB64(b64)
 end
 
 function Builder:OnImportBuild( wndHandler, wndControl, eMouseButton )
-  local pass, build = self:GetBuildFromB64(self.wndMain:FindChild("ImportEditBox"):GetText())
+  local pass, build = self:GetBuildFromB64(
+    self.wndMain:FindChild("ImportEditBox"):GetText())
   self.wndMain:FindChild("ImportError"):Show(not pass,false) 
   if not pass then return end
   self.tBuild = build
