@@ -478,6 +478,7 @@ function WeightMate:CalculateItemWeight(item, build)
 end
 function WeightMate:GetWeightFromPropSet(build,props)
   local ret = 0
+  props = props or {}
   for _,prop in pairs(props) do
     if prop['arDerived'] then
       ret = ret + self:GetWeightFromPropSet(build,prop['arDerived'])
