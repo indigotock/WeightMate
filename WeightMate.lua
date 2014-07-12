@@ -399,7 +399,7 @@ function WeightMate:DoTooltip(control,item,tFlags,nCount)
   
   local currentItem = Item.GetEquippedItemForItemType(item)
   if control then
-    if tablelength(self.tBuilds)>0 and  Item.IsEquippable(item) and tItemInfo.tPrimary then
+    if self.btools.util.table_size(self.tBuilds)>0 and  Item.IsEquippable(item) and tItemInfo.tPrimary then
       local baseform = {}
         baseform = Apollo.LoadForm(self.xmlDoc,"TooltipContainer",control:FindChild("Items"))
       for k,v in pairs(self.tBuilds) do
@@ -427,7 +427,7 @@ function WeightMate:DoTooltip(control,item,tFlags,nCount)
         f:FindChild("RoleIcon"):SetSprite(roles[v.eRole])
         f:FindChild("ClassIcon"):SetSprite(classes[v.eClass])
       end
-      local numitems = tablelength(self.tBuilds)
+      local numitems = self.btools.util.table_size(self.tBuilds)
 
       baseform:FindChild("BuildListContainer"):ArrangeChildrenVert()
       baseform:Move(0,0,baseform:GetWidth(),baseform:GetHeight()+(numitems*20))
