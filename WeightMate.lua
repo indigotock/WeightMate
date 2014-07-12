@@ -245,14 +245,10 @@ function Builder:HideImportExportBox( wndHandler, wndControl, eMouseButton)
 end
 
 function Builder:ShowImportExportBox( wndHandler, wndControl, eMouseButton)
-    Print("expored")
   self.wndMain:FindChild("ImportExportWindow"):Show(true,false)
-    Print("expored")
-    Print()
   self.wndMain:FindChild("ExportEditBox"):SetText(
     self.btools.util.encode_base64(self.btools.util.serialise_table(self.tBuild),
       'qQwWeErRtTyYuUiIoOpPaAsSdDfFgGhHjJkKlLzZxXcCvVbBnNmM9876543210/*'))
-  Print("expored")
   self.wndMain:FindChild("ImportEditBox"):SetText("")
   self.wndMain:FindChild("ImportError"):Show(false,false)
 end
