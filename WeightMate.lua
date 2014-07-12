@@ -25,7 +25,7 @@ local tRunes =
 }
 
 local tUntrackableStats = {
-  [127] = 1,[183]=1, [21]=1, [176]=1, [113]=1, [167]=1, [174]=1, [24]=1, [186]=1, [162]=1, [17]=1, [108]=1, [106]=1, [122]=1, [142]=1, [30]=1, [126]=1, [160]=1, [147]=1, [116]=1, [19]=1, [145]=1, [100]=1, [146]=1, [111]=1, [39]=1, [168]=1, [12]=1, [143]=1, [182]=1, [187]=1, [38]=1, [136]=1, [140]=1, [149]=1, [133]=1, [103]=1, [109]=1, [45]=1, [15]=1, [171]=1, [14]=1, [13]=1, [10]=1, [8]=1, [179]=1, [9]=1, [153]=1, [124]=1, [166]=1, [163]=1, [131]=1, [18]=1, [181]=1, [177]=1, [125]=1, [110]=1, [135]=1, [119]=1, [134]=1, [48]=1, [118]=1, [23]=1, [115]=1, [139]=1, [164]=1, [121]=1, [150]=1, [130]=1, [114]=1, [188]=1, [190]=1, [128]=1, [189]=1, [185]=1, [172]=1, [132]=1, [112]=1, [184]=1, [138]=1, [11]=1, [180]=1, [148]=1, [20]=1, [46]=1, [152]=1, [170]=1, [169]=1, [141]=1, [165]=1, [173]=1, [161]=1, [159]=1, [123]=1, [144]=1, [151]=1, [191]=1, [22]=1, [120]=1, [29]=1, [44]=1, [16]=1, [117]=1
+  [127] = 1,[183]=1, [21]=1, [176]=1, [113]=1, [167]=1, [174]=1, [24]=1, [186]=1, [162]=1, [17]=1, [108]=1, [106]=1, [122]=1, [142]=1, [30]=1, [126]=1, [160]=1, [147]=1, [116]=1, [19]=1, [145]=1, [100]=1, [146]=1, [111]=1, [39]=1, [168]=1, [12]=1, [143]=1, [182]=1, [187]=1, [38]=1, [136]=1, [140]=1, [149]=1, [133]=1, [103]=1, [109]=1, [45]=1, [15]=1, [171]=1, [14]=1, [13]=1, [10]=1, [8]=1, [179]=1, [9]=1, [153]=1, [124]=1, [166]=1, [163]=1, [131]=1, [18]=1, [181]=1, [177]=1, [125]=1, [110]=1, [135]=1, [119]=1, [134]=1, [118]=1, [23]=1, [115]=1, [139]=1, [164]=1, [121]=1, [150]=1, [130]=1, [114]=1, [188]=1, [190]=1, [128]=1, [189]=1, [185]=1, [172]=1, [132]=1, [112]=1, [184]=1, [138]=1, [11]=1, [180]=1, [148]=1, [20]=1, [46]=1, [152]=1, [170]=1, [169]=1, [141]=1, [165]=1, [173]=1, [161]=1, [159]=1, [123]=1, [144]=1, [151]=1, [191]=1, [22]=1, [120]=1, [29]=1, [44]=1, [16]=1, [117]=1
 }
 
 local tTrackableStats = {}
@@ -339,7 +339,6 @@ function WeightMate:OnSave(kind)
     ret.tBuilds = self.tBuilds
     ret.nVersion = self.nAddonVersion
     ret.nDefaultWeight = self.tSettings.nDefaultWeight
-    ret.nDismissVersion = self.tSettings.nDismissVersion
     ret.tBuilds=self.tBuilds
     return ret
   end
@@ -349,12 +348,10 @@ function WeightMate:OnRestore(kind,settings)
   if kind==GameLib.CodeEnumAddonSaveLevel.Account then
     if not settings then
       self.tSettings.nVersion.nDefaultWeight = 0
-      self.tSettings.nDismissVersion = 0
       self.tBuilds = {}
 
     elseif not settings.nVersion then --Old version
       self.tSettings.nDefaultWeight = settings.defaultWeight or 0
-      self.tSettings.nDismissVersion = settings['dismissInfo'] or 0
       self.tBuilds = {}
       for timestamp, build in pairs(settings['builds'] or {}) do
         local newBuild = self:GetCleanBuild()
@@ -369,7 +366,6 @@ function WeightMate:OnRestore(kind,settings)
 
     else -- Version 1.2 and above (less bad code!)
       self.tSettings.nDefaultWeight = settings.nDefaultWeight or 0
-      self.tSettings.nDismissVersion = settings.nDismissVersion or 0
       self.tBuilds = settings.tBuilds or {}
       for _,build in pairs(self.tBuilds) do
         build = self.btools.util.merge_table(self:GetCleanBuild(), build)
@@ -405,11 +401,7 @@ function WeightMate:DoTooltip(control,item,tFlags,nCount)
   if control then
     if tablelength(self.tBuilds)>0 and  Item.IsEquippable(item) and tItemInfo.tPrimary then
       local baseform = {}
-      if self:IsUpdateTextHidden() then
         baseform = Apollo.LoadForm(self.xmlDoc,"TooltipContainer",control:FindChild("Items"))
-      else
-        baseform = Apollo.LoadForm(self.xmlDoc,"TooltipContainerWithWarning",control:FindChild("Items"))
-      end
       for k,v in pairs(self.tBuilds) do
         local weight = self:CalculateItemWeight(tItemInfo.tPrimary, v)
         local cWeight = 0
@@ -510,7 +502,6 @@ function WeightMate:MainTabSelect( wndHandler, wndControl, eMouseButton )
   if control == nil then return end
   control:Show(true,true)
   if name == 'ConfigContent' then
-    self.wndMain:FindChild("DismissInfoToggle"):SetCheck(self:IsUpdateTextHidden())
     self.wndMain:FindChild("DefaultWeightTicker"):DestroyChildren()
     self.btools.gui.number_ticker(self.wndMain:FindChild("DefaultWeightTicker"),{nDefaultValue=self.tSettings.nDefaultWeight, nDivide=0, sHeaderText="", fOnChangeValue = function(ticker, val) self.tSettings.nDefaultWeight = val end})
   elseif name == 'WeightsContent' then
@@ -518,10 +509,6 @@ function WeightMate:MainTabSelect( wndHandler, wndControl, eMouseButton )
   elseif name == 'AboutContent' then
 
   end
-end
-
-function WeightMate:IsUpdateTextHidden()
-  return (self.tSettings.nDismissVersion or -1) >= (self.nAddonVersion or 0)
 end
 
 function WeightMate:UpdateBuildList()
@@ -562,14 +549,6 @@ function WeightMate:EditBuild( wndHandler, wndControl, eMouseButton )
   local id = tonumber(wndControl:FindChild("buildid"):GetText())
   Builder:new(id)
   self:UpdateBuildList()
-end
-
-function WeightMate:ShowTooltipInfo( wndHandler, wndControl, eMouseButton )
-  self.tSettings.nDismissVersion = 0
-end
-
-function WeightMate:HideTooltipInfo( wndHandler, wndControl, eMouseButton )
-  self.tSettings.nDismissVersion = self.nAddonVersion
 end
 
 -- Other
