@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Addon Author="indigotock" APIVersion="8" Name="WeightMate" Description="Easily track and compare the stats of items based on customised weight sets! Want to know whether that drop in Brutality is worth the gain in Tech? WeightMate helps you find out!" Version="1.2.4">
+<Addon Author="indigotock" APIVersion="9" Name="WeightMate" Description="Easily track and compare the stats of items based on customised weight sets! Want to know whether that drop in Brutality is worth the gain in Tech? WeightMate helps you find out!" Version="1.2.4">
     <!-- Brucey's Tools library files -->
     <Script Name="btools/gui/drop_button.lua"/>
     <Script Name="btools/gui/number_ticker.lua"/>
