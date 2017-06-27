@@ -14,14 +14,14 @@ local tPrimaryStats =
 
 local tRunes =
 {
-  [Item.CodeEnumSigilType.Air] = Apollo.GetString("CRB_Air"),
-  [Item.CodeEnumSigilType.Earth] = Apollo.GetString("CRB_Earth"),
-  [Item.CodeEnumSigilType.Fire] = Apollo.GetString("CRB_Fire"),
-  [Item.CodeEnumSigilType.Fusion] = Apollo.GetString("CRB_Fusion"),
-  [Item.CodeEnumSigilType.Life] = Apollo.GetString("CRB_Life"),
-  [Item.CodeEnumSigilType.Logic] = Apollo.GetString("CRB_Logic"),
-  [Item.CodeEnumSigilType.Omni] = Apollo.GetString("CRB_Omni"),
-  [Item.CodeEnumSigilType.Water] = Apollo.GetString("CRB_Water"),
+  [Item.CodeEnumRuneType.Air] = Apollo.GetString("CRB_Air"),
+  [Item.CodeEnumRuneType.Earth] = Apollo.GetString("CRB_Earth"),
+  [Item.CodeEnumRuneType.Fire] = Apollo.GetString("CRB_Fire"),
+  [Item.CodeEnumRuneType.Fusion] = Apollo.GetString("CRB_Fusion"),
+  [Item.CodeEnumRuneType.Life] = Apollo.GetString("CRB_Life"),
+  [Item.CodeEnumRuneType.Logic] = Apollo.GetString("CRB_Logic"),
+--  [Item.CodeEnumRuneType.Omni] = Apollo.GetString("CRB_Omni"),
+  [Item.CodeEnumRuneType.Water] = Apollo.GetString("CRB_Water"),
 }
 
 local tUntrackableStats = {
@@ -32,7 +32,10 @@ local tTrackableStats = {}
 
 for k,v in pairs(Unit.CodeEnumProperties) do
   if not tUntrackableStats[v] and not tPrimaryStats[v] then
-    tTrackableStats[v] = Item.GetPropertyName(v)
+    local pn =  Item.GetPropertyName(v):gsub("^%s*(.-)%s*$", "%1")
+    if pn and pn ~= '' then
+        tTrackableStats[v] = k ..' '.. pn
+    end
   end 
 end 
 
